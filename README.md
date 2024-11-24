@@ -4,5 +4,11 @@ Following along with [Database Design and Implementation](https://link.springer.
 
 ## Running Derby IJ
 ```bash
+./bin/ij.sh
+```
+
+### Not working
+I can't get the mvn and the classpath right...
+```bash
 % mvn exec:exec
 ```
