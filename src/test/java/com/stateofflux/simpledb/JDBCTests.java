@@ -1,13 +1,9 @@
 package com.stateofflux.simpledb;
 
-import org.apache.derby.jdbc.ClientDriver;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.*;
-
 
 public class JDBCTests {
     @Test
@@ -27,6 +23,7 @@ public class JDBCTests {
         }
         catch(SQLException e) {
             e.printStackTrace();
+            fail();
         }
     }
 }
