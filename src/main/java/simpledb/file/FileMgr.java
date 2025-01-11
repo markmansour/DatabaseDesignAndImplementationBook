@@ -5,14 +5,18 @@ import java.util.*;
 
 public class FileMgr {
    private File dbDirectory;
-   private int blocksize;
+   private final int blocksize;
    private boolean isNew;
    private Map<String,RandomAccessFile> openFiles = new HashMap<>();
+   private int blocksRead;
+   private int blocksWritten;
+   private int blocksAppended;
 
    public FileMgr(File dbDirectory, int blocksize) {
       this.dbDirectory = dbDirectory;
       this.blocksize = blocksize;
       isNew = !dbDirectory.exists();
+
 
       // create the directory if the database is new
       if (isNew)
@@ -29,6 +33,7 @@ public class FileMgr {
          RandomAccessFile f = getFile(blk.fileName());
          f.seek(blk.number() * blocksize);
          f.getChannel().read(p.contents());
+         blocksRead++;
       }
       catch (IOException e) {
          throw new RuntimeException("cannot read block " + blk);
@@ -40,6 +45,7 @@ public class FileMgr {
          RandomAccessFile f = getFile(blk.fileName());
          f.seek(blk.number() * blocksize);
          f.getChannel().write(p.contents());
+         blocksWritten++;
       }
       catch (IOException e) {
          throw new RuntimeException("cannot write block" + blk);
@@ -54,6 +60,7 @@ public class FileMgr {
          RandomAccessFile f = getFile(blk.fileName());
          f.seek(blk.number() * blocksize);
          f.write(b);
+         blocksAppended++;
       }
       catch (IOException e) {
          throw new RuntimeException("cannot append block" + blk);
@@ -87,5 +94,21 @@ public class FileMgr {
          openFiles.put(filename, f);
       }
       return f;
+   }
+
+    public int getBlocksRead() {
+        return blocksRead;
+    }
+
+    public int getBlocksWritten() {
+        return blocksWritten;
+    }
+
+    public int getBlocksAppended() {
+        return blocksAppended;
+    }
+
+   public String getStatsString() {
+      return String.format("reads: %d; writes: %d; appends: %d.", getBlocksRead(), getBlocksWritten(), getBlocksAppended());
    }
 }

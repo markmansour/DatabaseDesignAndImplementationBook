@@ -63,6 +63,7 @@ class RemoteConnectionImpl extends UnicastRemoteObject implements RemoteConnecti
    void commit() {
       currentTx.commit();
       currentTx = db.newTx();
+      System.out.println(db.fileMgr().getStatsString());
    }
    
    /**
@@ -72,6 +73,7 @@ class RemoteConnectionImpl extends UnicastRemoteObject implements RemoteConnecti
    void rollback() {
       currentTx.rollback();
       currentTx = db.newTx();
+      System.out.println(db.fileMgr().getStatsString());
    }
 }
 
