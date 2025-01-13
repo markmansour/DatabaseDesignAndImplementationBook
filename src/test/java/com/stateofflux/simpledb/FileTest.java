@@ -21,7 +21,7 @@ public class FileTest {
     void fileCreationTest() {
         SimpleDB db = new SimpleDB("filetest", 400, 8);
         FileMgr fm = db.fileMgr();
-        BlockId blk = new BlockId("testfile", 2);
+        BlockId blk = new BlockId("testfile.db", 2);
         int pos1 = 88;
 
         Page p1 = new Page(fm.blockSize());

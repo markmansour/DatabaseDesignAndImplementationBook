@@ -46,6 +46,8 @@ even number of 1s. Suppose you lose the value of the first bit. Because the pari
 missing bit must be a 1. Similar deductions can be made for each of the other bits
 (including the parity bit)
 
+> Note: Look into [Error correcting code](https://en.wikipedia.org/wiki/Error_correction_code), such as the Hamming code.
+
 These operations need to go through a controller.  When the controller performs an update, it can update the physical 
 disks, and it can calculate the parity bits.  Reads and writes are handles the same as with striping - the controller determines which disk holds
 the requested sector and performs theat read/write operation.  But write requests must also update the corresponding
@@ -102,13 +104,18 @@ Three classes
 * [Page](../src/main/java/simpledb/file/Page.java)
 * [FileMgr](../src/main/java/simpledb/file/FileMgr.java)
 
-sector >-- blocks >-- memory page >-- FileMgr
+```
+FileMgr ——∈ Memory Page ——∈ Blocks ——∈ Sector 
+```
+e.g. the FileMgr has many Memory Pages, which has many Block, which has many Sectors. 
+
 
 Notes:
 * Page is backed by a Java `ByteBuffer`, that wraps a byte array with read and write methods to arbitrary locations 
   of the array.
 * Any piece of data written has a prefix specifying the length of the piece of data stored.  e.g.
-  the String being stored, "abcedfghijlm" is 13 bytes, but a 4 byte prefix is added that specifies the size.
+  the String being stored, "abcedfghijlm" is 13 bytes, but a 4 byte prefix (uses bytes to encode the size so max is 9999) 
+  is added that specifies the size.
 * Otherwise, the implementation is very straight forward.  Modify a byte array that is read/written
   to disk.
 * When opening files (`RandomAccessFile`), disk io delaying is turned off to reduce the change that data lost (but 
@@ -126,3 +133,4 @@ Reference:
   performance.
 * [Chronicle Bytes](https://github.com/OpenHFT/Chronicle-Bytes) has a similar purpose to Java NIO's ByteBuffer with 
   many extensions.  This may be a good low level library to build on top of.
+* I couldn't find a good Forward Encoding Correction Library for Java.
