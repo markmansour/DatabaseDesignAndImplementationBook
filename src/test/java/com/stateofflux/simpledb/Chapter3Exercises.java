@@ -15,6 +15,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,6 +115,7 @@ public class Chapter3Exercises {
     class ThreePointSixteen {
         @Test
         // it is reasonable for the set* methods to not perform the checks, as the underlying buffer does the checks.
+        // see https://docs.oracle.com/javase/8/docs/api/java/nio/ByteBuffer.html#put throws IndexOutOfBoundsException.
         public void testSetIntThatOverrunsTheBoundary() {
             SimpleDB db = new SimpleDB("dbs/chapter3", 17, 8);
             FileMgr fm = db.fileMgr();
@@ -132,6 +136,33 @@ public class Chapter3Exercises {
             });
 
             fm.write(blk, p1);
+        }
+    }
+
+    @Nested
+    class ThreePointSeventeen {
+        @Test
+        public void testShort() {
+            Page p1 = new Page(200);
+            p1.setShort(0, Short.MAX_VALUE);
+            assertEquals(Short.MAX_VALUE, p1.getShort(0));
+        }
+
+        @Test
+        public void testBoolean() {
+            Page p1 = new Page(200);
+            p1.setBoolean(0, true);
+            p1.setBoolean(1, false);
+            assertTrue(p1.getBoolean(0));
+            assertFalse(p1.getBoolean(1));
+        }
+        @Test
+
+        public void testInstant() {
+            Page p1 = new Page(200);
+            Instant now = Instant.now();
+            p1.setInstant(0, now);
+            assertEquals(now, p1.getInstant(0));
         }
     }
 }

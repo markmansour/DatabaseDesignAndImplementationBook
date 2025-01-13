@@ -2,6 +2,9 @@ package simpledb.file;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 public class Page {
    private ByteBuffer bb;
@@ -47,6 +50,36 @@ public class Page {
    public void setString(int offset, String s) {
       byte[] b = s.getBytes(CHARSET);
       setBytes(offset, b);
+   }
+
+   public short getShort(int offset) {
+      return bb.getShort(offset);
+   }
+
+   public void setShort(int offset, short n) {
+      bb.putShort(offset, n);
+   }
+
+   public boolean getBoolean(int offset) {
+      return bb.get(offset) == 1;
+   }
+
+   public void setBoolean(int offset, boolean n) {
+      byte b = (byte) (n ? 1 : 0);
+      bb.put(offset, b);
+   }
+
+   public Instant getInstant(int offset) {
+      bb.position(offset);
+      long epoch = bb.getLong();
+      int nanos = bb.getInt();
+      return Instant.ofEpochSecond(epoch, nanos);
+   }
+
+   public void setInstant(int offset, Instant date) {
+      bb.position(offset);
+      bb.putLong(date.getEpochSecond());
+      bb.putInt(date.getNano());
    }
 
    public static int maxLength(int strlen) {
